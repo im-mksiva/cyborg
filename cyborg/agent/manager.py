@@ -76,7 +76,7 @@ class AgentManager(periodic_task.PeriodicTasks):
         return ret
     
     def custom_method(self, context):
-        return "weeeeeee"
+        return "messaggio dal controller: "
     
 
     @periodic_task.periodic_task(run_immediately=True)

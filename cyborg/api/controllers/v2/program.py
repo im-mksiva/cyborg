@@ -167,17 +167,18 @@ class ProgramController(base.CyborgController,
             pecan.request.context,
             obj_dep.device_id
         )
-        hostname = "yoga"
+        hostname = "manager"
         # driver_name = obj_dep.driver_name
         # cpid_list = obj_dep.get_cpid_list(pecan.request.context)
         # controlpath_id = cpid_list[0]
         # controlpath_id['cpid_info'] = jsonutils.loads(
         #     cpid_list[0]['cpid_info'])
-        self.agent_rpcapi = AgentAPI()
+        self.agent_rpcapi = AgentAPI("fpga-programming")
         # questo metodo porta al cyborg-agent/rpcapi.py
         ret = self.agent_rpcapi.fpga_program(
             pecan.request.context,
-            hostname
+            hostname,
+            "client"
             )
         return ret + " helloooo"
 

@@ -16,3 +16,4 @@ pip install keystonemiddleware
 pip install wsme
 pip install microversion_parse
 pip install oslo_policy
+pip install oslo_privsep
