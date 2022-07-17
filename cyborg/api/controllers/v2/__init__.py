@@ -28,6 +28,9 @@ from cyborg.api.controllers.v2 import arqs
 from cyborg.api.controllers.v2 import deployables
 from cyborg.api.controllers.v2 import device_profiles
 from cyborg.api.controllers.v2 import devices
+from cyborg.api.controllers.v2 import program
+
+
 
 from cyborg.api.controllers.v2 import versions
 
@@ -85,6 +88,7 @@ class Controller(rest.RestController):
     accelerator_requests = arqs.ARQsController()
     devices = devices.DevicesController()
     deployables = deployables.DeployablesController()
+    program = program.ProgramController()
 
     @expose.expose(V2)
     def get(self):

@@ -94,11 +94,12 @@ class DevicesController(base.CyborgController):
     """REST controller for Devices."""
 
     @authorize_wsgi.authorize_wsgi("cyborg:device", "get_one")
-    @expose.expose(Device, wtypes.text)
+    @expose.expose(Device, types.jsontype)
     def get_one(self, uuid):
         """Get a single device by UUID.
         :param uuid: uuid of a device.
         """
+        LOG.info("\n\n\nsiamo dentro\n\n\n")
         context = pecan.request.context
         device = objects.Device.get(context, uuid)
         return Device.convert_with_links(device)
@@ -106,7 +107,7 @@ class DevicesController(base.CyborgController):
     @authorize_wsgi.authorize_wsgi("cyborg:device", "get_all", False)
     @expose.expose(DeviceCollection, wtypes.text, wtypes.text, wtypes.text,
                    wtypes.ArrayType(types.FilterType))
-    def get_all(self, type=None, vendor=None, hostname=None, filters=None):
+    def get_all(self, uuid=None, vendor=None, hostname=None, filters=None):
         """Retrieve a list of devices.
         :param type: type of a device.
         :param vendor: vendor ID of a device.
@@ -114,16 +115,22 @@ class DevicesController(base.CyborgController):
         locates.
         :param filters: a filter of FilterType to get device list by filter.
         """
+        context = pecan.request.context
         filters_dict = {}
-        if type:
-            filters_dict["type"] = type
-        if vendor:
-            filters_dict["vendor"] = vendor
-        if hostname:
-            filters_dict["hostname"] = hostname
-        if filters:
-            for filter in filters:
-                filters_dict.update(filter.as_dict())
+
+        if uuid != None:
+            LOG.info("\n\n\n"+uuid+"\n\n\n")
+            device = objects.Device.get(context, uuid)
+            return Device.convert_with_links(device)
+        # if type:
+        #     filters_dict["type"] = type
+        # if vendor:
+        #     filters_dict["vendor"] = vendor
+        # if hostname:
+        #     filters_dict["hostname"] = hostname
+        # if filters:
+        #     for filter in filters:
+        #         filters_dict.update(filter.as_dict())
         context = pecan.request.context
         obj_devices = objects.Device.list(context, filters=filters_dict)
         LOG.info('[devices:get_all] Returned: %s', obj_devices)

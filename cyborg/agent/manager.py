@@ -57,8 +57,7 @@ class AgentManager(periodic_task.PeriodicTasks):
     def periodic_tasks(self, context, raise_on_error=False):
         return self.run_periodic_tasks(context, raise_on_error=raise_on_error)
 
-    def fpga_program(self, context, controlpath_id,
-                     bitstream_uuid, driver_name):
+    def fpga_program(self, context):
         bitstream_uuid = str(bitstream_uuid)
         if not uuidutils.is_uuid_like(bitstream_uuid):
             raise exception.InvalidUUID(uuid=bitstream_uuid)
@@ -75,8 +74,14 @@ class AgentManager(periodic_task.PeriodicTasks):
             LOG.debug('Remove tmp bitstream file: %s', download_path.name)
             os.remove(download_path.name)
         return ret
+    
+    def custom_method(self, context):
+        return "weeeeeee"
+    
 
     @periodic_task.periodic_task(run_immediately=True)
     def update_available_resource(self, context, startup=True):
         """Update all kinds of accelerator resources from their drivers."""
         self._rt.update_usage(context)
+
+

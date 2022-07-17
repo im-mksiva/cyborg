@@ -27,6 +27,9 @@ from cyborg.api import expose
 from cyborg.common import authorize_wsgi
 from cyborg.common import exception as exc
 from cyborg import objects
+from oslo_log import log
+
+LOG = log.getLogger(__name__)
 
 
 class Deployable(base.APIBase):
@@ -118,7 +121,7 @@ class DeployablePatchType(types.JsonPatchType):
         return defaults + ['/name', '/num_accelerators']
 
 
-class DeployablesController(base.CyborgController,
+class ProgramController(base.CyborgController,
                             DeployableCollection):
     """REST controller for Deployables."""
 
@@ -127,7 +130,16 @@ class DeployablesController(base.CyborgController,
     # TODO(s_shogo): We will update the policy of deployable APIs,
     # and using the new default policy rules in the W or later.
     # @authorize_wsgi.authorize_wsgi("cyborg:deployables", "program", False)
-    @expose.expose(wtypes.text, wtypes.text, wtypes.text)
+
+    """
+    DeployablePatchType, la struttura che vuole è praticamente questa:
+        response = self.patch_json('/deployables/%s/program' % dep_uuid,
+                                   [{'path': '/bitstream_id', 'value': body,
+                                     'op': 'replace'}], headers=self.headers)
+                                     
+    """
+
+    @expose.expose(wtypes.text, wtypes.text, body=types.jsontype)
     def program(self, uuid, program_info):
         """Program a new deployable(FPGA).
 
@@ -137,8 +149,6 @@ class DeployablesController(base.CyborgController,
         :return: If fpga program success return deployable object.
         """
 
-        if (1 == 1):
-            return "tutto ok"
 
         image_uuid = program_info[0]['value'][0]['image_uuid']
         # TODO(s_shogo): In W or later version we plan to add schema check,
@@ -148,30 +158,28 @@ class DeployablesController(base.CyborgController,
             types.UUIDType().validate(image_uuid)
         except Exception:
             raise
+        # qui dà errore perché non trova più un deployable con quell'id
+        # devo capire come fa a non trovare niente
 
         obj_dep = objects.Deployable.get(pecan.request.context, uuid)
+        
         obj_dev = objects.Device.get_by_device_id(
             pecan.request.context,
             obj_dep.device_id
         )
-        hostname = obj_dev.hostname
-        driver_name = obj_dep.driver_name
-        cpid_list = obj_dep.get_cpid_list(pecan.request.context)
-        controlpath_id = cpid_list[0]
-        controlpath_id['cpid_info'] = jsonutils.loads(
-            cpid_list[0]['cpid_info'])
+        hostname = "yoga"
+        # driver_name = obj_dep.driver_name
+        # cpid_list = obj_dep.get_cpid_list(pecan.request.context)
+        # controlpath_id = cpid_list[0]
+        # controlpath_id['cpid_info'] = jsonutils.loads(
+        #     cpid_list[0]['cpid_info'])
         self.agent_rpcapi = AgentAPI()
+        # questo metodo porta al cyborg-agent/rpcapi.py
         ret = self.agent_rpcapi.fpga_program(
             pecan.request.context,
-            "yoga",
-            controlpath_id,
-            image_uuid,
-            driver_name,
+            hostname
             )
-        if ret:
-            return self.convert_with_link(obj_dep)
-        else:
-            raise exc.FPGAProgramError(ret=ret)
+        return ret + " helloooo"
 
     @authorize_wsgi.authorize_wsgi("cyborg:deployable", "get_one")
     @expose.expose(Deployable, types.uuid)

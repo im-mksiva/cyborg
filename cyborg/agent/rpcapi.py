@@ -51,13 +51,24 @@ class AgentAPI(object):
                                      version_cap=self.RPC_API_VERSION,
                                      serializer=serializer)
 
-    def fpga_program(self, context, hostname, controlpath_id,
-                     bitstream_uuid, driver_name):
+    # def fpga_program(self, context, hostname, controlpath_id,
+    #                  bitstream_uuid, driver_name):
+    #     LOG.info('Agent fpga_program: hostname: (%s) ' +
+    #              'bitstream_id: (%s)', hostname, bitstream_uuid)
+    #     version = '1.0'
+    #     cctxt = self.client.prepare(server=hostname, version=version)
+    #     return cctxt.call(context, 'fpga_program',
+    #                       controlpath_id=controlpath_id,
+    #                       bitstream_uuid=bitstream_uuid,
+    #                       driver_name=driver_name)
+
+    def fpga_program(self, context, hostname):
         LOG.info('Agent fpga_program: hostname: (%s) ' +
-                 'bitstream_id: (%s)', hostname, bitstream_uuid)
+                 'siamo nella funzione di programmazione')
         version = '1.0'
         cctxt = self.client.prepare(server=hostname, version=version)
-        return cctxt.call(context, 'fpga_program',
-                          controlpath_id=controlpath_id,
-                          bitstream_uuid=bitstream_uuid,
-                          driver_name=driver_name)
+        LOG.info("dopo la creazione del client %s" ,hostname)
+        # questa chiamata porta al manager dell'agent, idealmente nell'host dove si trova
+        # la FPGA da programmare
+        return cctxt.call(context, 'custom_method')
+
