@@ -81,8 +81,8 @@ class AgentManager(periodic_task.PeriodicTasks):
 
     def driver_creation(self, context, driver_name):
         driver = self.fpga_driver.create(driver_name)
-        driver.program()
-        return
+        ret = driver.program()
+        return ret
     
 
     # @periodic_task.periodic_task(run_immediately=True)

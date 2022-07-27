@@ -185,7 +185,7 @@ class ProgramController(base.CyborgController,
             pecan.request.context,
             hostname
             )
-        return " helloooo"
+        return ret + " helloooo"
 
     @expose.expose(wtypes.text, wtypes.text, body=types.jsontype)
     def driver(self, driver_name):
