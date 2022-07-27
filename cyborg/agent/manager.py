@@ -76,10 +76,16 @@ class AgentManager(periodic_task.PeriodicTasks):
         return ret
     
     def custom_method(self, context):
+        driver = self.fpga_driver.create("xilinx")
         return "messaggio dal controller: "
+
+    def driver_creation(self, context, driver_name):
+        driver = self.fpga_driver.create(driver_name)
+        driver.program()
+        return
     
 
-    @periodic_task.periodic_task(run_immediately=True)
+    # @periodic_task.periodic_task(run_immediately=True)
     def update_available_resource(self, context, startup=True):
         """Update all kinds of accelerator resources from their drivers."""
         self._rt.update_usage(context)

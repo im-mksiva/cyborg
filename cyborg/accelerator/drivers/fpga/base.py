@@ -17,11 +17,16 @@
 Cyborg FPGA driver implementation.
 """
 
-from cyborg.accelerator.drivers.fpga import utils
+# from cyborg.accelerator.drivers.fpga import utils
+# from drivers.fpga.xilinx import driver
+from oslo_log import log as logging
+
+LOG = logging.getLogger(__name__)
 
 
 VENDOR_MAPS = {"0x8086": "intel",
-               "1bd4": 'inspur'}
+               "1bd4": 'inspur',
+               "xilinx": 'xilinx',}
 
 
 class FPGADriver(object):
@@ -33,6 +38,10 @@ class FPGADriver(object):
 
     @classmethod
     def create(cls, vendor, *args, **kwargs):
+        LOG.info("\n\n\n\n\n\n\n\n\n")
+        LOG.info(cls.__subclasses__())
+        LOG.info("\n\n\n\n\n\n\n\n\n")
+
         for sclass in cls.__subclasses__():
             vendor = VENDOR_MAPS.get(vendor, vendor)
             if vendor == sclass.VENDOR:
@@ -48,6 +57,6 @@ class FPGADriver(object):
     def program(self, device_path, image):
         raise NotImplementedError()
 
-    @classmethod
-    def discover_vendors(cls):
-        return utils.discover_vendors()
+    # @classmethod
+    # def discover_vendors(cls):
+    #     return utils.discover_vendors()

@@ -71,3 +71,7 @@ class AgentAPI(object):
         # la FPGA da programmare
         return cctxt.call(context, 'custom_method')
 
+    def driver_test(self, context, driver_name):
+        version = '1.0'
+        cctxt = self.client.prepare(server="yoga", version=version)
+        return cctxt.call(context, 'driver_creation', driver_name=driver_name)

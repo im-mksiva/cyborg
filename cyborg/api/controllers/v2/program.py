@@ -125,7 +125,9 @@ class ProgramController(base.CyborgController,
                             DeployableCollection):
     """REST controller for Deployables."""
 
-    _custom_actions = {'program': ['POST']}
+    _custom_actions = {'program': ['POST'],
+                        'driver': ['GET']
+                        }
 
     # TODO(s_shogo): We will update the policy of deployable APIs,
     # and using the new default policy rules in the W or later.
@@ -170,6 +172,7 @@ class ProgramController(base.CyborgController,
         # ret = obj_dep.convert_with_link()
         hostname = "manager"
         hostname2 = "arancino"
+        hostname = "arancino"
         # driver_name = obj_dep.driver_name
         # cpid_list = obj_dep.get_cpid_list(pecan.request.context)
         # controlpath_id = cpid_list[0]
@@ -180,10 +183,18 @@ class ProgramController(base.CyborgController,
         # questo metodo porta al cyborg-agent/rpcapi.py
         ret = self.agent_rpcapi.fpga_program(
             pecan.request.context,
-            hostname2
+            hostname
             )
-        return ret + " helloooo"
+        return " helloooo"
 
+    @expose.expose(wtypes.text, wtypes.text, body=types.jsontype)
+    def driver(self, driver_name):
+        self.agent_rpcapi = AgentAPI()
+        ret = self.agent_rpcapi.driver_test(
+                pecan.request.context,
+                driver_name
+                )
+        return "driver test"
 
     @authorize_wsgi.authorize_wsgi("cyborg:deployable", "get_one")
     @expose.expose(Deployable, types.uuid)
